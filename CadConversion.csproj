@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+    <ItemGroup>
+    <Reference Include="eDrawings.Interop.EModelViewControl">
+      <HintPath>C:\Program Files\Common Files\eDrawings2024\eDrawings.Interop.EModelViewControl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
