@@ -7,9 +7,11 @@ namespace CadConversion
     {
         private readonly AppSettings _settings;
         private EModelViewControl? m_ctrl;
+        private ClosePopupHook _popupHook;
         public MainForm(AppSettings settings)
         {
             _settings = settings;
+            _popupHook = new ClosePopupHook();
             InitializeComponent();
             InitializeEDrawingsHost();
         }
@@ -93,6 +95,12 @@ namespace CadConversion
                 Console.WriteLine("Completed");
                 Application.Exit();
             }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            _popupHook.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }
