@@ -10,15 +10,6 @@ namespace CadConversion
         public MainForm(AppSettings settings)
         {
             _settings = settings;
-            // Trace.Listeners.Add(new TextWriterTraceListener(File.CreateText("trace.txt")));
-            // Trace.WriteLine(settings.OutputDirectory);
-            // Trace.WriteLine(settings.LogFile);
-            // Trace.WriteLine(settings.OutputFormat);
-            // foreach (string item in settings.InputFiles)
-            // {
-            //     Trace.WriteLine(item);
-            // }
-            // Trace.Flush();
             InitializeComponent();
             InitializeEDrawingsHost();
         }
@@ -47,7 +38,7 @@ namespace CadConversion
             if (m_ctrl == null)
                 throw new InvalidOperationException("eDrawing control is not initialized.");
 
-            Trace.WriteLine($"Loaded {fileName}");
+            Console.WriteLine($"Loaded {fileName}");
             string outputFilePath = Path.Combine(_settings.OutputDirectory, GenerateRandomFilename());
             // This is where the conversion and saving happens
             m_ctrl.Save(outputFilePath, false, "");
@@ -70,7 +61,7 @@ namespace CadConversion
 
         private void OnFailedLoadingDocument(string fileName, int errorCode, string errorString)
         {
-            Trace.WriteLine($"failed to load {fileName}: {errorString}");
+            Console.WriteLine($"failed to load {fileName}: {errorString}");
             ProcessNext();
         }
 
@@ -81,7 +72,7 @@ namespace CadConversion
 
         private void OnFailedSavingDocument(string fileName, int ErrorCode, string errorString)
         {
-            Trace.WriteLine($"failed to save {fileName}: {errorString}");
+            Console.WriteLine($"failed to save {fileName}: {errorString}");
             ProcessNext();
         }
 
@@ -99,7 +90,7 @@ namespace CadConversion
             }
             else
             {
-                Trace.WriteLine("Completed");
+                Console.WriteLine("Completed");
                 Application.Exit();
             }
         }
