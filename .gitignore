@@ -1,3 +1,6 @@
-#Build Results
+# Build Results
 [Bb]in/
 [Oo]bj/
+
+# Test Files
+test/
