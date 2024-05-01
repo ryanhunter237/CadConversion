@@ -67,6 +67,19 @@ namespace CadConversion
             File.AppendAllText(_settings.LogFile, logMessage);
         }
 
+        private void CsvFileProcessing(string inputFilePath, string outputFilePath)
+        // This could be used to make a csv file isntead of the log
+        {
+            bool fileExists = File.Exists(_settings.CsvFile);
+            if (!fileExists)
+            {
+                string header = "inputFile, outputFile\n"
+                File.AppendAllText(_settings.CsvFile, header);
+            }
+            string row = $"\"{inputFilePath}\",\"{outputFilePath}\""
+            File.AppendAllText(_settings.CsvFile, row);
+        }
+
         private void OnFailedLoadingDocument(string fileName, int errorCode, string errorString)
         {
             Console.WriteLine($"failed to load {fileName}: {errorString}");
