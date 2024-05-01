@@ -14,8 +14,17 @@ namespace CadConversion
             // Trace.WriteLine(settings.OutputDirectory);
             // Trace.WriteLine(settings.LogFile);
             // Trace.WriteLine(settings.OutputFormat);
+            // foreach (string item in settings.InputFiles)
+            // {
+            //     Trace.WriteLine(item);
+            // }
             // Trace.Flush();
             InitializeComponent();
+            InitializeEDrawingsHost();
+        }
+
+        private void InitializeEDrawingsHost()
+        {
             var host = new EDrawingsHost();
             host.ControlLoaded += OnControlLoaded;
             this.Controls.Add(host);
