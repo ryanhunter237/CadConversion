@@ -1,12 +1,20 @@
 using eDrawings.Interop.EModelViewControl;
+using System.Diagnostics;
 
 namespace CadConversion
 {
     public partial class MainForm : Form
     {
+        private readonly AppSettings _settings;
         private EModelViewControl? m_ctrl;
-        public MainForm()
+        public MainForm(AppSettings settings)
         {
+            _settings = settings;
+            // Trace.Listeners.Add(new TextWriterTraceListener(File.CreateText("trace.txt")));
+            // Trace.WriteLine(settings.OutputDirectory);
+            // Trace.WriteLine(settings.LogFile);
+            // Trace.WriteLine(settings.OutputFormat);
+            // Trace.Flush();
             InitializeComponent();
             var host = new EDrawingsHost();
             host.ControlLoaded += OnControlLoaded;
