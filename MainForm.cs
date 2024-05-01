@@ -14,6 +14,12 @@ namespace CadConversion
             _popupHook = new ClosePopupHook();
             InitializeComponent();
             InitializeEDrawingsHost();
+            // These options will not display the window, but still render the images
+            // Probably need to disable them in testing
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            this.Opacity = 0;  // Make the window completely transparent.
+            this.Visible = false;  // Hide the form.
         }
 
         private void InitializeEDrawingsHost()
