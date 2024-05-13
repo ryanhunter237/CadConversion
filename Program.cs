@@ -11,10 +11,21 @@ namespace CadConversion
         [STAThread]
         static void Main(string[] args)
         {
-            AttachConsole(ATTACH_PARENT_PROCESS);
-            ApplicationConfiguration.Initialize();
-            var settings = ConfigurationManager.ParseArguments(args);
-            Application.Run(new MainForm(settings));
+            if (!AttachConsole(ATTACH_PARENT_PROCESS))
+            {
+                Console.WriteLine("Failed to attach console.");
+            }
+            try
+            {
+                ApplicationConfiguration.Initialize();
+                var settings = ConfigurationManager.ParseArguments(args);
+                Application.Run(new MainForm(settings));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+            }
         }
     }
 }

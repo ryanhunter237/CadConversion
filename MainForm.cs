@@ -50,7 +50,7 @@ namespace CadConversion
             string outputFilePath = Path.Combine(_settings.OutputDirectory, GenerateRandomFilename());
             // This is where the conversion and saving happens
             m_ctrl.Save(outputFilePath, false, "");
-            LogFileProcessing(fileName, outputFilePath);
+            CsvFileProcessing(fileName, outputFilePath);
         }
 
         private string GenerateRandomFilename()
@@ -61,23 +61,16 @@ namespace CadConversion
                               .Select(s => s[random.Next(s.Length)]).ToArray()) + _settings.OutputFormat;
         }
 
-        private void LogFileProcessing(string inputFilePath, string outputFilePath)
-        {
-            string logMessage = $"Processed '{inputFilePath}' and created '{outputFilePath}'\n";
-            File.AppendAllText(_settings.LogFile, logMessage);
-        }
-
         private void CsvFileProcessing(string inputFilePath, string outputFilePath)
-        // This could be used to make a csv file isntead of the log
         {
-            bool fileExists = File.Exists(_settings.CsvFile);
+            bool fileExists = File.Exists(_settings.LogCsvFile);
             if (!fileExists)
             {
-                string header = "inputFile, outputFile\n"
-                File.AppendAllText(_settings.CsvFile, header);
+                string header = "inputFile, outputFile\n";
+                File.AppendAllText(_settings.LogCsvFile, header);
             }
-            string row = $"\"{inputFilePath}\",\"{outputFilePath}\""
-            File.AppendAllText(_settings.CsvFile, row);
+            string row = $"\"{inputFilePath}\",\"{outputFilePath}\"\n";
+            File.AppendAllText(_settings.LogCsvFile, row);
         }
 
         private void OnFailedLoadingDocument(string fileName, int errorCode, string errorString)

@@ -8,10 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <Reference Include="eDrawings.Interop.EModelViewControl">
       <HintPath>C:\Program Files\Common Files\eDrawings2024\eDrawings.Interop.EModelViewControl.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Md5hash.cs" />
   </ItemGroup>
 
 </Project>

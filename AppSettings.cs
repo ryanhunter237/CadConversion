@@ -8,13 +8,13 @@ namespace CadConversion
     {
         public List<string> InputFiles { get; private set; }
         public string OutputDirectory { get; private set; }
-        public string LogFile {get; private set; }
+        public string LogCsvFile {get; private set; }
         public string OutputFormat {get; private set; }
-        public AppSettings(List<string> inputFiles, string outputDirectory, string logFile, string outputFormat)
+        public AppSettings(List<string> inputFiles, string outputDirectory, string logCsvFile, string outputFormat)
         {
             InputFiles = inputFiles;
             OutputDirectory = outputDirectory;
-            LogFile = logFile;
+            LogCsvFile = logCsvFile;
             OutputFormat = outputFormat;
         }
     }
@@ -77,8 +77,7 @@ namespace CadConversion
 
             DateTime now = DateTime.Now;
             string timestamp = now.ToString("yyyy-MM-dd-HHmmss");
-            string filename = $"CadConversion-{timestamp}.log";
-            string LogFile = Path.Combine(outputDirectory, $"CadConversion-{timestamp}.log");
+            string LogCsvFile = Path.Combine(outputDirectory, $"CadConversion-{timestamp}.csv");
 
             string outputFormat = formats.FirstOrDefault() ?? DEFAULT_FORMAT;
             if (!outputFormat.StartsWith("."))
@@ -110,7 +109,7 @@ namespace CadConversion
                 }
             }
 
-            return new AppSettings(inputFiles, outputDirectory, LogFile, outputFormat);
+            return new AppSettings(inputFiles, outputDirectory, LogCsvFile, outputFormat);
         }
     }
 }
