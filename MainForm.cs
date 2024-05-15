@@ -7,6 +7,16 @@ namespace CadConversion
     {
         private readonly AppSettings _settings;
         private EModelViewControl? m_ctrl;
+        private List<EMVViewOrientation> _viewOrientations = new List<EMVViewOrientation>
+        {
+            EMVViewOrientation.eMVOrientationIsoMetric,
+            EMVViewOrientation.eMVOrientationTop,
+            EMVViewOrientation.eMVOrientationFront,
+            EMVViewOrientation.eMVOrientationRight
+        };
+        private int _currentViewIndex;
+        private string _currentInputFile;
+
         public MainForm(AppSettings settings)
         {
             _settings = settings;
@@ -39,10 +49,33 @@ namespace CadConversion
                 throw new InvalidOperationException("eDrawing control is not initialized.");
 
             Console.WriteLine($"Loaded {fileName}");
-            string outputFilePath = Path.Combine(_settings.OutputDirectory, GenerateRandomFilename());
-            // This is where the conversion and saving happens
-            m_ctrl.Save(outputFilePath, false, "");
-            CsvFileProcessing(fileName, outputFilePath);
+            _currentViewIndex = 0;
+            _currentInputFile = fileName;
+            SaveNextView();
+        }
+
+        private void SaveNextView()
+        {
+            if (m_ctrl == null)
+                throw new InvalidOperationException("eDrawing control is not initialized.");
+
+            if (_currentViewIndex < _viewOrientations.Count)
+            {
+                var currentView = _viewOrientations[_currentViewIndex];
+                m_ctrl.ViewOrientation = currentView;
+                m_ctrl.UpdateScene();
+                // Thread.Sleep(2000);
+
+                string outputFilePath = Path.Combine(_settings.OutputDirectory, GenerateRandomFilename());
+                m_ctrl.Save(outputFilePath, false, "");
+                CsvFileProcessing(_currentInputFile, outputFilePath);
+
+                _currentViewIndex++;
+            }
+            else
+            {
+                ProcessNext();
+            }
         }
 
         private string GenerateRandomFilename()
@@ -73,13 +106,13 @@ namespace CadConversion
 
         private void OnFinishedSavingDocument()
         {
-            ProcessNext();
+            SaveNextView();
         }
 
         private void OnFailedSavingDocument(string fileName, int ErrorCode, string errorString)
         {
             Console.WriteLine($"failed to save {fileName}: {errorString}");
-            ProcessNext();
+            SaveNextView();
         }
 
         private void ProcessNext()
