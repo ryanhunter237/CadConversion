@@ -1,5 +1,6 @@
 using eDrawings.Interop.EModelViewControl;
 using System.Diagnostics;
+using System.Threading;
 
 namespace CadConversion
 {
@@ -16,6 +17,7 @@ namespace CadConversion
         };
         private int _currentViewIndex;
         private string _currentInputFile;
+        private string _currentFileId;
 
         public MainForm(AppSettings settings)
         {
@@ -51,6 +53,7 @@ namespace CadConversion
             Console.WriteLine($"Loaded {fileName}");
             _currentViewIndex = 0;
             _currentInputFile = fileName;
+            _currentFileId = GenerateRandomFilename();
             SaveNextView();
         }
 
@@ -64,9 +67,9 @@ namespace CadConversion
                 var currentView = _viewOrientations[_currentViewIndex];
                 m_ctrl.ViewOrientation = currentView;
                 m_ctrl.UpdateScene();
-                // Thread.Sleep(2000);
 
-                string outputFilePath = Path.Combine(_settings.OutputDirectory, GenerateRandomFilename());
+                string suffix = GetViewSuffix(currentView);
+                string outputFilePath = Path.Combine(_settings.OutputDirectory, $"{_currentFileId}_{suffix}.png");
                 m_ctrl.Save(outputFilePath, false, "");
                 CsvFileProcessing(_currentInputFile, outputFilePath);
 
@@ -78,12 +81,24 @@ namespace CadConversion
             }
         }
 
+        private string GetViewSuffix(EMVViewOrientation viewOrientation)
+        {
+            return viewOrientation switch
+            {
+                EMVViewOrientation.eMVOrientationIsoMetric => "iso",
+                EMVViewOrientation.eMVOrientationTop => "top",
+                EMVViewOrientation.eMVOrientationFront => "front",
+                EMVViewOrientation.eMVOrientationRight => "right",
+                _ => "unknown"
+            };
+        }
+
         private string GenerateRandomFilename()
         {
             Random random = new Random();
             const string chars = "abcdefghijklmnopqrstuvwxyz";
             return new string(Enumerable.Repeat(chars, 10)
-                              .Select(s => s[random.Next(s.Length)]).ToArray()) + _settings.OutputFormat;
+                              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         private void CsvFileProcessing(string inputFilePath, string outputFilePath)
