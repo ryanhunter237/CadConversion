@@ -67,6 +67,9 @@ namespace CadConversion
                 var currentView = _viewOrientations[_currentViewIndex];
                 m_ctrl.ViewOrientation = currentView;
                 m_ctrl.UpdateScene();
+                // Thread.Sleep(2000); // Allow time for the view to update
+
+                PrintCameraInfo(); // Print camera information
 
                 string suffix = GetViewSuffix(currentView);
                 string outputFilePath = Path.Combine(_settings.OutputDirectory, $"{_currentFileId}_{suffix}.png");
@@ -153,5 +156,28 @@ namespace CadConversion
         {
             base.OnFormClosed(e);
         }
+
+        private void PrintCameraInfo()
+        {
+            if (m_ctrl == null)
+                throw new InvalidOperationException("eDrawing control is not initialized.");
+
+            object camera = m_ctrl.ViewCamera;
+
+            if (camera is Array cameraArray)
+            {
+                Console.WriteLine("Camera Information:");
+
+                for (int i = 0; i < cameraArray.Length; i++)
+                {
+                    Console.WriteLine($"Element {i}: {cameraArray.GetValue(i)}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Unexpected camera type.");
+            }
+        }
+
     }
 }
