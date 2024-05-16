@@ -1,6 +1,9 @@
 using eDrawings.Interop.EModelViewControl;
 using System.Diagnostics;
 using System.Threading;
+using System;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace CadConversion
 {
@@ -19,8 +22,8 @@ namespace CadConversion
             EMVViewOrientation.eMVOrientationBottom
         };
         private int _currentViewIndex;
-        private string _currentInputFile;
-        private string _currentFileId;
+        private string? _currentInputFile;
+        private string? _currentFileId;
 
         public MainForm(AppSettings settings)
         {
@@ -56,7 +59,6 @@ namespace CadConversion
             Console.WriteLine($"Loaded {fileName}");
             _currentViewIndex = 0;
             _currentInputFile = fileName;
-            _currentFileId = GenerateRandomFilename();
             SaveNextView();
         }
 
@@ -100,12 +102,18 @@ namespace CadConversion
             };
         }
 
-        private string GenerateRandomFilename()
+        private string ComputeMd5Hash(string filePath)
         {
-            Random random = new Random();
-            const string chars = "abcdefghijklmnopqrstuvwxyz";
-            return new string(Enumerable.Repeat(chars, 10)
-                              .Select(s => s[random.Next(s.Length)]).ToArray());
+            Console.WriteLine($"Computing Md5 Hash of {filePath}");
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    Console.WriteLine($"Computed Hash if {hash}");
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
+            }
         }
 
         private void CsvFileProcessing(string inputFilePath, string outputFilePath)
@@ -146,6 +154,7 @@ namespace CadConversion
             {
                 string filePath = _settings.InputFiles[0];
                 _settings.InputFiles.RemoveAt(0);
+                _currentFileId = ComputeMd5Hash(filePath);
                 m_ctrl.CloseActiveDoc("");
                 m_ctrl.OpenDoc(filePath, false, false, false, "");
             }
