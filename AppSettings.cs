@@ -9,13 +9,11 @@ namespace CadConversion
         public List<string> InputFiles { get; private set; }
         public string OutputDirectory { get; private set; }
         public string LogCsvFile {get; private set; }
-        public string OutputFormat {get; private set; }
-        public AppSettings(List<string> inputFiles, string outputDirectory, string logCsvFile, string outputFormat)
+        public AppSettings(List<string> inputFiles, string outputDirectory, string logCsvFile)
         {
             InputFiles = inputFiles;
             OutputDirectory = outputDirectory;
             LogCsvFile = logCsvFile;
-            OutputFormat = outputFormat;
         }
     }
 
@@ -26,15 +24,12 @@ namespace CadConversion
         private const string DEFAULT_FILTER = "*.*";
         private const string ARG_OUTPUT_DIR = "-outdir";
         private const string DEFAULT_OUTDIR = "outdir";
-        private const string ARG_FORMAT = "-format";
-        private const string DEFAULT_FORMAT = ".png";
-       
+
         public static AppSettings ParseArguments(string[] args)
         {
             var inputs = new List<string>();
             var filters = new List<string>();
             var outDirs = new List<string>();
-            var formats = new List<string>();
 
             List<string>? curList = null;
 
@@ -51,10 +46,6 @@ namespace CadConversion
                 else if (args[i].Equals(ARG_OUTPUT_DIR, StringComparison.CurrentCultureIgnoreCase))
                 {
                     curList = outDirs;
-                }
-                else if (args[i].Equals(ARG_FORMAT, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    curList = formats;
                 }
                 else
                 {
@@ -78,16 +69,10 @@ namespace CadConversion
             DateTime now = DateTime.Now;
             string timestamp = now.ToString("yyyy-MM-dd-HHmmss");
             string LogCsvFile = Path.Combine(outputDirectory, $"CadConversion-{timestamp}.csv");
-
-            string outputFormat = formats.FirstOrDefault() ?? DEFAULT_FORMAT;
-            if (!outputFormat.StartsWith("."))
-            {
-                outputFormat = "." + outputFormat;
-            }
             
             var filter = filters.FirstOrDefault() ?? DEFAULT_FILTER;
 
-            if (!inputs.Any())
+            if (inputs.Count == 0)
             {
                 throw new ArgumentException($"Inputs are not specified. Use {ARG_INPUT} switch to specify the input directory(s) or file(s)");
             }
@@ -109,7 +94,7 @@ namespace CadConversion
                 }
             }
 
-            return new AppSettings(inputFiles, outputDirectory, LogCsvFile, outputFormat);
+            return new AppSettings(inputFiles, outputDirectory, LogCsvFile);
         }
     }
 }

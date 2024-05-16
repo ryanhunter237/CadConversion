@@ -105,13 +105,11 @@ namespace CadConversion
 
         private string ComputeMd5Hash(string filePath)
         {
-            Console.WriteLine($"Computing Md5 Hash of {filePath}");
             using (var md5 = MD5.Create())
             {
                 using (var stream = File.OpenRead(filePath))
                 {
                     var hash = md5.ComputeHash(stream);
-                    Console.WriteLine($"Computed Hash if {hash}");
                     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
