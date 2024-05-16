@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Text;
 
 namespace CadConversion
@@ -38,12 +36,12 @@ namespace CadConversion
         #region Private Fields
         private bool _disposed = false;
         private IntPtr _hookID = IntPtr.Zero;
-        private WinEventDelegate _procDelegate;
-        private static readonly List<string> knownPopupIdentifiers = new List<string>
-        {
+        private readonly WinEventDelegate _procDelegate;
+        private static readonly List<string> knownPopupIdentifiers =
+        [
             "You need the full version of eDrawings to perform this function.",
             "Error reading file.",
-        };
+        ];
         #endregion
 
         #region Constructor and Initialization
@@ -57,8 +55,8 @@ namespace CadConversion
         #region Event Handling
         private static bool EnumWindowProc(IntPtr hWnd, IntPtr lParam)
         {
-            StringBuilder text = new StringBuilder(255);
-            GetWindowText(hWnd, text, 255);
+            StringBuilder text = new(255);
+            _ = GetWindowText(hWnd, text, 255);
             string childWindowText = text.ToString();
             Console.WriteLine("Popup Hook: Child window text: " + childWindowText);
             if (knownPopupIdentifiers.Any(identifier => childWindowText.Contains(identifier, StringComparison.OrdinalIgnoreCase)))
@@ -86,10 +84,10 @@ namespace CadConversion
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             Console.WriteLine("Popup Hook: A new window is now in the foreground.");
-            StringBuilder windowText = new StringBuilder(256);
+            StringBuilder windowText = new(256);
             if (GetWindowText(hwnd, windowText, 256) > 0)
             {
-                Console.WriteLine($"Popup Hook: Window title: {windowText.ToString()}");
+                Console.WriteLine($"Popup Hook: Window title: {windowText}");
                 if (windowText.ToString() == "eDrawings")
                 {
                     EnumChildWindows(hwnd, new EnumWindowsProc(EnumWindowProc), IntPtr.Zero);

@@ -19,8 +19,8 @@ namespace CadConversion
             if (!m_IsLoaded)
             {
                 m_IsLoaded = true;
-                var ctrl = GetOcx() as EModelViewControl;
-                if (ctrl != null) {
+                if (GetOcx() is EModelViewControl ctrl)
+                {
                     ControlLoaded?.Invoke(ctrl);
                 }
             }
