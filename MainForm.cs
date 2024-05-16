@@ -11,8 +11,9 @@ namespace CadConversion
     {
         private readonly AppSettings _settings;
         private EModelViewControl? m_ctrl;
-        private List<EMVViewOrientation> _viewOrientations = new List<EMVViewOrientation>
-        {
+        private ClosePopupHook _popupHook;
+        private readonly List<EMVViewOrientation> _viewOrientations =
+        [
             EMVViewOrientation.eMVOrientationIsoMetric,
             EMVViewOrientation.eMVOrientationFront,
             EMVViewOrientation.eMVOrientationRight,
@@ -20,7 +21,7 @@ namespace CadConversion
             EMVViewOrientation.eMVOrientationLeft,
             EMVViewOrientation.eMVOrientationTop,
             EMVViewOrientation.eMVOrientationBottom
-        };
+        ];
         private int _currentViewIndex;
         private string? _currentInputFile;
         private string? _currentFileId;
@@ -28,6 +29,7 @@ namespace CadConversion
         public MainForm(AppSettings settings)
         {
             _settings = settings;
+            _popupHook = new ClosePopupHook();
             InitializeComponent();
             InitializeEDrawingsHost();
         }
@@ -73,7 +75,6 @@ namespace CadConversion
                 var currentView = _viewOrientations[_currentViewIndex];
                 m_ctrl.ViewOrientation = currentView;
                 m_ctrl.UpdateScene();
-                // Thread.Sleep(2000);
 
                 string suffix = GetViewSuffix(currentView);
                 string outputFilePath = Path.Combine(_settings.OutputDirectory, $"{_currentFileId}_{suffix}.png");
@@ -103,16 +104,12 @@ namespace CadConversion
             };
         }
 
-        private string ComputeMd5Hash(string filePath)
+        private static string ComputeMd5Hash(string filePath)
         {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filePath))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-                }
-            }
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(filePath);
+            var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }
 
         private void CsvFileProcessing(string inputFilePath, string outputFilePath)
@@ -166,6 +163,7 @@ namespace CadConversion
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            _popupHook.Dispose();
             base.OnFormClosed(e);
         }
     }
