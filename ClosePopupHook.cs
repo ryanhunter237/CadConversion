@@ -41,6 +41,7 @@ namespace CadConversion
         [
             "You need the full version of eDrawings to perform this function.",
             "Error reading file.",
+            "This file contains no display data.",
         ];
         #endregion
 
