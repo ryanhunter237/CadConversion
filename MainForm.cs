@@ -1,8 +1,4 @@
 using eDrawings.Interop.EModelViewControl;
-using System.Diagnostics;
-using System.Threading;
-using System;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace CadConversion
@@ -11,7 +7,7 @@ namespace CadConversion
     {
         private readonly AppSettings _settings;
         private EModelViewControl? m_ctrl;
-        private ClosePopupHook _popupHook;
+        private readonly ClosePopupHook _popupHook;
         private readonly List<EMVViewOrientation> _viewOrientations =
         [
             EMVViewOrientation.eMVOrientationIsoMetric,
@@ -32,6 +28,7 @@ namespace CadConversion
             _popupHook = new ClosePopupHook();
             InitializeComponent();
             InitializeEDrawingsHost();
+            HideWindow();
         }
 
         private void InitializeEDrawingsHost()
@@ -40,6 +37,14 @@ namespace CadConversion
             host.ControlLoaded += OnControlLoaded;
             this.Controls.Add(host);
             host.Dock = DockStyle.Fill;
+        }
+
+        private void HideWindow()
+        {
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            this.Opacity = 0;
+            this.Visible = false;
         }
 
         private void OnControlLoaded(EModelViewControl ctrl)
