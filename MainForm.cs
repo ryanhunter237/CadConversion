@@ -66,7 +66,8 @@ namespace CadConversion
         {
             if (m_ctrl == null)
                 throw new InvalidOperationException("eDrawing control is not initialized.");
-
+            if (_currentInputFile == null)
+                throw new InvalidProgramException("_currentInputFile should not be null here");
             if (_currentViewIndex < _viewOrientations.Count)
             {
                 var currentView = _viewOrientations[_currentViewIndex];
